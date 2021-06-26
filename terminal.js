@@ -1,3 +1,13 @@
+var inputObject = {
+    history: []
+}
+function recordToHistory(command) {
+    if (inputObject.history.length < 20) inputObject.history.push(command);
+    else {
+        inputObject.history.shift();
+        inputObject.history.push(push(command))
+    }
+}
 function smart_split(input, del, empty_space) {
     if (input.length === 0) return input;
     var outputs = [""];
@@ -40,11 +50,12 @@ function smart_split(input, del, empty_space) {
 
 var terminal_user_title = "guest";
 var terminal_user_client = "default"
-
+var clientID = "<a style='color:#DC143C'>" + terminal_user_title + "</a>" + "@" + "<a style='color:#7FFF00'>" + terminal_user_client + "</a>" + " $ ";
 function update_user_title(title, client) {
     terminal_user_title = title;
     terminal_user_client = client;
-    document.getElementById("input_title").innerText = terminal_user_title + "@" + terminal_user_client + " $ ";
+    clientID = "<a style='color:#DC143C'>" + terminal_user_title + "</a>" + "@" + "<a style='color:#7FFF00'>" + terminal_user_client + "</a>" + " $ ";
+    document.getElementById("input_title").innerHTML = clientID;
 }
 
 update_user_title(terminal_user_title, terminal_user_client);
@@ -81,40 +92,64 @@ document.getElementById('input_source').onblur = function () {
     document.getElementById("input_source").focus();
 };
 
-document.getElementById('input_source').addEventListener('keyup', submit_command);
+$("#input_source").keyup(() => {
+    var command = document.getElementById("input_source").value;
+    submit_command((command) => {
+        var base = command.split(" ")[0]
+        if (registry.hasOwnProperty(base)) {
+            registry[base].load(command);
+        } else {
+            block_log("'" + base + "' is not a registered command, please use 'help' command for listing available commands.");
+        }
+    }, clientID + "<a id='inputted'>" + command + "</p>")
+});
+var indexHistory = inputObject.history.length - 1;
+$(document).keydown((e) => {
+    var key = 0;
+    key = e.keyCode;
+    if (indexHistory < 0) indexHistory = 0
+    if (indexHistory > inputObject.history.length) indexHistory = inputObject.history.length
+    if (key == 38) {
+        $("#input_source").val(inputObject.history[indexHistory]);
+        indexHistory--;
+    } else if (key == 40) {
+        $("#input_source").val(inputObject.history[indexHistory]);
+        indexHistory++;
+    }
+})
 
-var registry = new Map();
+var registry = new Object();
 
 /**
  * Register command to registry.
  * @param {String} cmd_name 
  * @param {Function} callback
  */
-function register_cmd(cmd_name, callback) {
-    registry.set(cmd_name.toString().toUpperCase(), callback);
+function register_cmd(cmd = { cmd_name: null, callback: null, description: "" }) {
+    registry[cmd.cmd_name] = {
+        load: cmd.callback,
+        description: cmd.description
+    }
 }
-
-function submit_command() {
+function submit_command(handler,
+    message = "") {
     event.preventDefault();
     if (!(event.keyCode === 13)) return;
     var command = document.getElementById("input_source").value;
+    recordToHistory(command)
     document.getElementById("input_source").value = "";
-
     new_block();
-    block_log(terminal_user_title + "@" + terminal_user_client + " $ " + "<a id='inputted'>" + command + "</p>");
-
-    if (registry.has(command.split(" ")[0].toUpperCase())) {
-        registry.get(command.split(" ")[0].toUpperCase())(command);
-    } else {
-        block_log("'" + command.split(" ")[0].toUpperCase() + "' is not a registered command, please use # help command for listing available commands.");
-    }
+    block_log(message);
+    handler(command);
 }
 
-register_cmd("help", function (cmd) {
-    block_log("Registry Command List: ");
-    registry.forEach(function (value, key, map) {
-        block_log("    - " + key);
-    });
+register_cmd({
+    cmd_name: "help",
+    callback: (cmd) => {
+        block_log("Registry Command List: ");
+        for (let key in registry) block_log("    - " + key + " - " + registry[key].description);
+    },
+    description: ""
 });
 const getUA = () => {
     let device = "Unknown";

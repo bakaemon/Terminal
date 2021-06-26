@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="terminal.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
     <script src="jquery.js"></script>
-	<title>Eclipse OS - Terminal Web-based application</title>
+	<title>Terminal Web-based application</title>
 </head>
 
 <body>
@@ -22,7 +22,12 @@
             </div>
         </div>
     </div>
-    <script src="connection.js"></script>
+    <script>
+        $(document).ready(()=>{
+            log("Welcome to the deepfake terminal!\n")
+        });
+    </script>
+    <script src="jsonbin.js"></script>
     <script src="terminal.js"></script>
     <script src="wiki.js"></script>
     <script src="command.js"></script>
