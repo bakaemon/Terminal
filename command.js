@@ -12,8 +12,27 @@ const getParameters = (cmd, startAt = 1) => {
 }
 
 register_cmd("clear", () => {
-    
-})
+    clear_all_block();
+});
+register_cmd("login", (cmd) => {
+    var username = getParameters(cmd)[0];
+    var password = getParameters(cmd)[1];
+
+    if (!username || !password) return block_log("ERROR: Must pass either username or password!");
+    var bin = new Bin("60d6a64f5ed58625fd196d67");
+    try {
+        bin.read((res) => {
+            var user = res.users;
+            for (var u of user) {
+                if (u.username == username && u.password == password) {
+                    update_user_title(u.username);
+                    return block_log("Logged in as " + u.username);
+                }
+            }
+            block_log("Can not logged in.")
+        });
+    } catch (e) { block_log(e) }
+});
 register_cmd("sum", (cmd) => {
     var parameters = getParameters(cmd);
     try {

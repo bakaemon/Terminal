@@ -38,11 +38,11 @@ function smart_split(input, del, empty_space) {
     return outputs;
 }
 
-var terminal_user_title = "C: Undefined/username";
+var terminal_user_title = "guest";
 
 function update_user_title(title) {
     terminal_user_title = title;
-    document.getElementById("input_title").innerText = terminal_user_title + " # ";
+    document.getElementById("input_title").innerText = terminal_user_title + "@default $ ";
 }
 
 update_user_title(terminal_user_title);
