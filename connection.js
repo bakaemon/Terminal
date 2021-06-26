@@ -6,8 +6,8 @@ class Bin {
      * 
      * @param {String} binID 
      */
-    constructor(binID) {
-        this.binID = binID;
+    constructor(binID, version = 1) {
+        this.binID = binID + "/" + version;
     }
     read(callback) {
         try {
@@ -22,7 +22,7 @@ class Bin {
 
         } catch (e) { log(e) }
     }
-    create(query) {
+    create(query, callback) {
         try {
             req.onreadystatechange = () => {
                 if (req.readyState == XMLHttpRequest.DONE) {
@@ -35,10 +35,11 @@ class Bin {
             req.send(query);
         } catch (e) { log(e) }
     }
-    update(query) {
+    update(query, callback) {
         try {
             req.onreadystatechange = () => {
                 if (req.readyState == XMLHttpRequest.DONE) {
+                    this.version += 1;
                     callback(JSON.parse(req.responseText));
                 }
             };

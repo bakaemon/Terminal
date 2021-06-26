@@ -2,7 +2,7 @@ function smart_split(input, del, empty_space) {
     if (input.length === 0) return input;
     var outputs = [""];
 
-    var compare = function(base, insert, position) {
+    var compare = function (base, insert, position) {
         if ((position + insert.length) > base.length) return false;
         for (var i = 0; i < insert.length; i++) {
             if (!(base.charAt(position + i) === insert.charAt(i))) return false;
@@ -39,13 +39,15 @@ function smart_split(input, del, empty_space) {
 }
 
 var terminal_user_title = "guest";
+var terminal_user_client = "default"
 
-function update_user_title(title) {
+function update_user_title(title, client) {
     terminal_user_title = title;
-    document.getElementById("input_title").innerText = terminal_user_title + "@default $ ";
+    terminal_user_client = client;
+    document.getElementById("input_title").innerText = terminal_user_title + "@" + terminal_user_client + " $ ";
 }
 
-update_user_title(terminal_user_title);
+update_user_title(terminal_user_title, terminal_user_client);
 
 var current_block;
 
@@ -75,7 +77,7 @@ function log(message) {
     wrapper.innerHTML += "<div class='log'><p>" + message + "</p></div>";
 }
 
-document.getElementById('input_source').onblur = function() {
+document.getElementById('input_source').onblur = function () {
     document.getElementById("input_source").focus();
 };
 
@@ -99,7 +101,7 @@ function submit_command() {
     document.getElementById("input_source").value = "";
 
     new_block();
-    block_log(terminal_user_title + " # " + "<a id='inputted'>" + command + "</p>");
+    block_log(terminal_user_title + "@" + terminal_user_client + " $ " + "<a id='inputted'>" + command + "</p>");
 
     if (registry.has(command.split(" ")[0].toUpperCase())) {
         registry.get(command.split(" ")[0].toUpperCase())(command);
@@ -108,11 +110,31 @@ function submit_command() {
     }
 }
 
-register_cmd("help", function(cmd) {
+register_cmd("help", function (cmd) {
     block_log("Registry Command List: ");
-    registry.forEach(function(value, key, map) {
+    registry.forEach(function (value, key, map) {
         block_log("    - " + key);
     });
 });
+const getUA = () => {
+    let device = "Unknown";
+    const ua = {
+        "Generic Linux": /Linux/i,
+        "Android": /Android/i,
+        "BlackBerry": /BlackBerry/i,
+        "Bluebird": /EF500/i,
+        "Chrome OS": /CrOS/i,
+        "Datalogic": /DL-AXIS/i,
+        "Honeywell": /CT50/i,
+        "iPad": /iPad/i,
+        "iPhone": /iPhone/i,
+        "iPod": /iPod/i,
+        "macOS": /Macintosh/i,
+        "Windows": /IEMobile|Windows/i,
+        "Zebra": /TC70|TC55/i,
+    }
+    Object.keys(ua).map(v => navigator.userAgent.match(ua[v]) && (device = v));
+    return device;
+}
 
 
