@@ -1,11 +1,15 @@
 var inputObject = {
     history: []
 }
+var indexHistory = inputObject.history.length - 1;
+var registry = new Object();
+
+
 function recordToHistory(command) {
     if (inputObject.history.length < 20) inputObject.history.push(command);
     else {
         inputObject.history.shift();
-        inputObject.history.push(push(command))
+        inputObject.history.push(command);
     }
 }
 function smart_split(input, del, empty_space) {
@@ -103,29 +107,13 @@ $("#input_source").keyup(() => {
         }
     }, clientID + "<a id='inputted'>" + command + "</p>")
 });
-var indexHistory = inputObject.history.length - 1;
-$(document).keydown((e) => {
-    var key = 0;
-    key = e.keyCode;
-    if (indexHistory < 0) indexHistory = 0
-    if (indexHistory > inputObject.history.length) indexHistory = inputObject.history.length
-    if (key == 38) {
-        $("#input_source").val(inputObject.history[indexHistory]);
-        indexHistory--;
-    } else if (key == 40) {
-        $("#input_source").val(inputObject.history[indexHistory]);
-        indexHistory++;
-    }
-})
 
-var registry = new Object();
 
 /**
  * Register command to registry.
- * @param {String} cmd_name 
- * @param {Function} callback
  */
 function register_cmd(cmd = { cmd_name: null, callback: null, description: "" }) {
+    if (!cmd.cmd_name || !cmd.callback || !cmd.description) throw Error("Property must not be null.")
     registry[cmd.cmd_name] = {
         load: cmd.callback,
         description: cmd.description
@@ -136,11 +124,13 @@ function submit_command(handler,
     event.preventDefault();
     if (!(event.keyCode === 13)) return;
     var command = document.getElementById("input_source").value;
-    recordToHistory(command)
-    document.getElementById("input_source").value = "";
-    new_block();
-    block_log(message);
-    handler(command);
+    if (command) {
+        recordToHistory(command)
+        document.getElementById("input_source").value = "";
+        new_block();
+        block_log(message);
+        handler(command);
+    }
 }
 
 register_cmd({
@@ -149,7 +139,7 @@ register_cmd({
         block_log("Registry Command List: ");
         for (let key in registry) block_log("    - " + key + " - " + registry[key].description);
     },
-    description: ""
+    description: "Show all available commands and their descriptions"
 });
 const getUA = () => {
     let device = "Unknown";

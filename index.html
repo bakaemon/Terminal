@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="terminal.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
     <script src="jquery.js"></script>
-	<title>Terminal Web-based application</title>
+    <title>Terminal Web-based application</title>
 </head>
 
 <body>
@@ -13,9 +13,10 @@
         <div id="Container">
             <div id="input">
                 <p id="input_title"></p>
-                <input id="input_source" type="command" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus>
+                <input id="input_source" type="command" autocomplete="off" autocorrect="off" autocapitalize="off"
+                    spellcheck="false" autofocus>
             </div>
-            <div id="logger" >
+            <div id="logger">
                 <div id="wrapper">
                     <div i="log"></div>
                 </div>
@@ -23,9 +24,31 @@
         </div>
     </div>
     <script>
-        $(document).ready(()=>{
-            log("Welcome to the deepfake terminal!\n")
+        $(document).ready(() => {
+            // $.ajax({
+            //     url: "https://pastebin.com/raw/kGYVi474",
+            //     headers: {
+
+            //     },
+            //     method: "post",
+            //     success:  res => log(res)
+            // })
+            log("Welcome to deepfake terminal!")
         });
+        $(document).keydown((e) => {
+            var key = 0;
+            key = e.keyCode;
+            if (indexHistory < 0) indexHistory = 0
+            if (indexHistory > inputObject.history.length) indexHistory = inputObject.history.length
+            if (key == 38) {
+                $("#input_source").val(inputObject.history[indexHistory]);
+                indexHistory--;
+            } else if (key == 40) {
+                $("#input_source").val(inputObject.history[indexHistory]);
+                indexHistory++;
+            }
+        });
+        
     </script>
     <script src="jsonbin.js"></script>
     <script src="terminal.js"></script>
