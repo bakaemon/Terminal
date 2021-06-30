@@ -4,6 +4,11 @@ var inputObject = {
 var indexHistory = inputObject.history.length - 1;
 var registry = new Object();
 
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 function recordToHistory(command) {
     if (inputObject.history.length < 20) inputObject.history.push(command);
@@ -81,7 +86,9 @@ function clear_all_block() {
  * @param {String} message 
  */
 function block_log(message) {
-    current_block.innerHTML += "<p style='white-space:pre-wrap; '>" + message + "</p>";
+    var randid = String(getRandomInt(1, 1000))
+    current_block.innerHTML += "<p style='white-space:pre-wrap; ' id=" + randid + ">" + message + "</p>";
+    return $("p#" + randid)
 }
 /**
  * Default function display message to terminal screen

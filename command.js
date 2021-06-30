@@ -126,28 +126,42 @@ register_cmd({
         var city = getParameters(cmd).join(" ");
         const apikey = "043fe41560ba98d3eeb53597c52def13";
         const url = "https://api.openweathermap.org/data/2.5/weather?";
-        $.ajax({
-            url: url + "appid=" + apikey + "&q=" + city,
-            method: "get",
-            success: (x) => {
-                var timezone = x.timezone / 3600;
-                var y = x.main;
-                var temperature = y.temp - 273.15;
-                var pressure = y.pressure;
-                var humidity = y.humidity;
-                var z = x.weather;
-                var description = z[0].description;
-                block_log(
-                    `Weather data of ${city} (GMT ${timezone}):\n\n`
-                    + `Temperature: ${temperature} degree Celcius\n`
-                    + `Pressure: ${pressure} mmHg\n`
-                    + `Humidity: ${humidity}%\n`
-                    + `Description: ${description}\n`)
-            },
-            error: (res, options, err) => {
-                block_log(`${res.status} ERROR: ${err}`)
-            }
-        })
+        try {
+            $.ajax({
+                url: url + "appid=" + apikey + "&q=" + city,
+                method: "get",
+                success: (x) => {
+                    var timezone = x.timezone / 3600;
+                    var y = x.main;
+                    var temperature = y.temp - 273.15;
+                    var pressure = y.pressure;
+                    var humidity = y.humidity;
+                    var z = x.weather;
+                    var description = z[0].description;
+                    block_log(
+                        `Weather data of ${city} (GMT ${timezone}):\n\n`
+                        + `Temperature: ${temperature} degree Celcius\n`
+                        + `Pressure: ${pressure} mmHg\n`
+                        + `Humidity: ${humidity}%\n`
+                        + `Description: ${description}\n`)
+                },
+                error: (res, options, err) => {
+                    block_log(`${res.status} ERROR: ${err}`)
+                }
+            })
+        } catch (e) { block_log(e) }
     },
     description: "Fetch Weather details on OpenWeatherMap."
+});
+register_cmd({
+    cmd_name: "test",
+    callback: (cmd) => {
+        var msg = block_log("Choose either" +
+            "<span id='yes'>[Yes]</span> || <span id='no'>[No]</span> ")
+
+        $("#yes, #no").click((e) => {
+            msg.text(e.target.id)
+        });
+    },
+    description: "test"
 })
