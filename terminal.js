@@ -4,10 +4,8 @@ var inputObject = {
 var indexHistory = inputObject.history.length - 1;
 var registry = new Object();
 
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+function getRandomInt() {
+    return Math.floor(Math.random() * Date.now());
 }
 
 function recordToHistory(command) {
@@ -86,7 +84,7 @@ function clear_all_block() {
  * @param {String} message 
  */
 function block_log(message) {
-    var randid = String(getRandomInt(1, 1000))
+    var randid = String(getRandomInt())
     current_block.innerHTML += "<p style='white-space:pre-wrap; ' id=" + randid + ">" + message + "</p>";
     return $("p#" + randid)
 }
@@ -147,13 +145,14 @@ register_cmd({
     cmd_name: "help",
     callback: (cmd) => {
         if (getParameters(cmd).length == 0) {
-            block_log("Registry Command List: ");
-            for (let key in registry) block_log("    - " + key + " - " + registry[key].description);
+            var msg = ""
+            for (let key in registry) msg += "    - " + key + " - " + registry[key].description + "\n";
+            block_log("Registry Command List: \n" + msg);
         } else {
             var command = getParameters(cmd)[0];
             if (!registry.hasOwnProperty(command))
-                return block_log("Command " + command + " is not registered in registry, please use 'help' to show available commands.");
-            block_log("USAGE: \n    - " + registry[command].usage + "\nDESCRIPTION: \n    - " + registry[command].description)
+                return block_log("Command " + command + " is not registered in registry, please use 'help' to show available commands." +
+                    "USAGE: \n    - " + registry[command].usage + "\nDESCRIPTION: \n    - " + registry[command].description)
         }
     },
     description: "Show all available commands and their descriptions",
