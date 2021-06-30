@@ -105,7 +105,8 @@ register_cmd({
                         var pages = result["query"]["pages"];
                         for (var k in pages) {
                             if (pages.hasOwnProperty(k)) {
-                                block_log("Wikipedia article of <b>" + pages[k].title + "</b>\n" + pages[k]["extract"]);
+                                block_log("Wikipedia article of <b>" + pages[k].title + "</b>\n");
+                                block_log(pages[k]["extract"] || "No data found.")
                             }
                         }
                     });

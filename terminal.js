@@ -139,14 +139,15 @@ function submit_command(handler,
 register_cmd({
     cmd_name: "help",
     callback: (cmd) => {
-        if (!cmd) {
+        if (getParameters(cmd).length == 0) {
             block_log("Registry Command List: ");
             for (let key in registry) block_log("    - " + key + " - " + registry[key].description);
+        } else {
+            var command = getParameters(cmd)[0];
+            if (!registry.hasOwnProperty(command))
+                return block_log("Command " + command + " is not registered in registry, please use 'help' to show available commands.");
+            block_log("USAGE: \n    - " + registry[command].usage + "\nDESCRIPTION: \n    - " + registry[command].description)
         }
-        var command = getParameters(cmd)[0];
-        if (!registry.hasOwnProperty(command))
-            return block_log("Command " + command + " is not registered in registry, please use 'help' to show available commands.");
-        block_log("USAGE: \n    - " + registry[command].usage + "\nDESCRIPTION: \n    - "+ registry[command].description)
     },
     description: "Show all available commands and their descriptions",
     usage: "help [COMMAND]"
