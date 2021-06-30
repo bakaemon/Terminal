@@ -57,7 +57,7 @@ register_cmd({
                             if (result.success) block_log("User " + username + " has been updated.");
                             else block_log(result.message)
                         })
-    
+
                     });
                 } catch (e) { block_log(e) }
                 break;
@@ -75,7 +75,7 @@ register_cmd({
                     block_log(e);
                 }
         }
-    }, 
+    },
     description: "Perform login or register user."
 });
 register_cmd({
@@ -111,7 +111,7 @@ register_cmd({
                     });
                     break;
                 case "search":
-    
+
                     break;
             }
         } catch (e) { block_log(e); }
@@ -124,7 +124,7 @@ register_cmd({
     callback: (cmd) => {
         var city = getParameters(cmd).join(" ");
         const apikey = "043fe41560ba98d3eeb53597c52def13";
-        const url = "http://api.openweathermap.org/data/2.5/weather?";
+        const url = "https://api.openweathermap.org/data/2.5/weather?";
         $.ajax({
             url: url + "appid=" + apikey + "&q=" + city,
             method: "get",
@@ -135,7 +135,6 @@ register_cmd({
                 var pressure = y.pressure;
                 var humidity = y.humidity;
                 var z = x.weather;
-                console.log(x)
                 var description = z[0].description;
                 block_log(
                     `Weather data of ${city} (GMT ${timezone}):\n\n`
@@ -144,7 +143,7 @@ register_cmd({
                     + `Humidity: ${humidity}%\n`
                     + `Description: ${description}\n`)
             },
-            error: (res, options, err)=> {
+            error: (res, options, err) => {
                 block_log(`${res.status} ERROR: ${err}`)
             }
         })

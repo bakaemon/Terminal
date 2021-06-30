@@ -112,12 +112,15 @@ $("#input_source").keyup(() => {
 /**
  * Register command to registry.
  */
-function register_cmd(cmd = { cmd_name: null, callback: null, description: "" }) {
+function register_cmd(cmd = { cmd_name: null, callback: null, description: "", usage: null }) {
     if (!cmd.cmd_name || !cmd.callback || !cmd.description) throw Error("Property must not be null.")
+    if (!cmd.usage) cmd.usage = cmd.cmd_name + " PARAMS"
     registry[cmd.cmd_name] = {
         load: cmd.callback,
-        description: cmd.description
+        description: cmd.description,
+        usage: cmd.usage
     }
+
 }
 function submit_command(handler,
     message = "") {
@@ -136,10 +139,17 @@ function submit_command(handler,
 register_cmd({
     cmd_name: "help",
     callback: (cmd) => {
-        block_log("Registry Command List: ");
-        for (let key in registry) block_log("    - " + key + " - " + registry[key].description);
+        if (!cmd) {
+            block_log("Registry Command List: ");
+            for (let key in registry) block_log("    - " + key + " - " + registry[key].description);
+        }
+        var command = getParameters(cmd)[0];
+        if (!registry.hasOwnProperty(command))
+            return block_log("Command " + command + " is not registered in registry, please use 'help' to show available commands.");
+        block_log("USAGE: \n    - " + registry[command].usage + "\nDESCRIPTION: \n    - "+ registry[command].description)
     },
-    description: "Show all available commands and their descriptions"
+    description: "Show all available commands and their descriptions",
+    usage: "help [COMMAND]"
 });
 const getUA = () => {
     let device = "Unknown";
