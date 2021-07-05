@@ -34,6 +34,7 @@
             //     success:  res => log(res)
             // })
             log("Welcome to deepfake terminal!")
+            readFile("text.html", (txt) => { log(txt)})
         });
         $(document).keydown((e) => {
             var key = 0;
@@ -50,6 +51,7 @@
         });
 
     </script>
+    <script src="read.js"></script>
     <script src="jsonbin.js"></script>
     <script src="terminal.js"></script>
     <script src="wiki.js"></script>

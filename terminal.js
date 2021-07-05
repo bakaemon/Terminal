@@ -86,7 +86,7 @@ function clear_all_block() {
 function block_log(message) {
     var randid = String(getRandomInt())
     current_block.innerHTML += "<p style='white-space:pre-wrap; ' id=" + randid + ">" + message + "</p>";
-    return $("p#" + randid)
+    return document.getElementById(randid)
 }
 /**
  * Default function display message to terminal screen

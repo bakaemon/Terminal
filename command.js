@@ -154,13 +154,40 @@ register_cmd({
     description: "Fetch Weather details on OpenWeatherMap."
 });
 register_cmd({
+    cmd_name: "quiz",
+    description: "Get fun quiz to solve.",
+    usage: "quiz",
+    callback: (cmd) => {
+        var message = block_log("Loading...");
+        $.ajax({
+            url: "https://opentdb.com/api.php?amount=1&category=9&type=boolean",
+            success: (res) => {
+                var x = res.results[0];
+                var category = x.category;
+                var difficulty = x.difficulty;
+                var question = x.question;
+                var answer = (x.correct_answer == "True") ? true : false;
+                var promptMsg = "Is it correct?\n<span id='true'>[True]</span> || <span id='false'>[False]</span>"
+                var msg = `Category: ${category} || Difficulty: ${difficulty}\n\n` +
+                    `${question}\n${promptMsg}`
+                message.innerHTML = msg
+                $("#true, #false").click((e) => {
+                    var userAnswer = (e.target.id == "true") ? true : false;
+                    if (userAnswer == answer) message.innerHTML = msg.replace(promptMsg, "\n<p style='color:#7FFF00'>Congratulations! You are correct!</p>");
+                    else message.innerHTML = msg.replace(promptMsg, "\n<p style='color:#DC143C'>The answer is " + x.correct_answer + ", try again next time.</p>");
+                })
+            }
+        })
+    }
+});
+register_cmd({
     cmd_name: "test",
     callback: (cmd) => {
         var msg = block_log("Choose either" +
-            "<span id='yes'>[Yes]</span> || <span id='no'>[No]</span> ")
+            "")
 
         $("#yes, #no").click((e) => {
-            msg.text(e.target.id)
+            msg.innerText = e.target.id;
         });
     },
     description: "test"
