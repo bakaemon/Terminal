@@ -1,4 +1,7 @@
-
+function greeting() {
+    block_log("Welcome to deepfake terminal!")
+    readFile("logo.txt", (txt) => { block_log(txt) })
+}
 /**
  * Get array of parameters
  * @param {String} cmd 
@@ -16,7 +19,7 @@ const getParameters = (cmd, startAt = 1) => {
 
 register_cmd({
     cmd_name: "clear",
-    callback: () => { clear_all_block() },
+    callback: () => { clear_all_block(); greeting(); },
     description: "Clear terminal screen"
 });
 register_cmd({
