@@ -67,13 +67,13 @@ function update_user_title(title, client) {
 
 update_user_title(terminal_user_title, terminal_user_client);
 
-var current_block;
 
 function new_block() {
     var wrapper = document.getElementById('wrapper');
-    current_block = document.createElement("div");
+    var current_block = document.createElement("div");
     current_block.classList.add("log");
     wrapper.appendChild(current_block);
+    return current_block;
 }
 function clear_all_block() {
     var wrapper = document.getElementById('wrapper');
@@ -84,6 +84,7 @@ function clear_all_block() {
  * @param {String} message 
  */
 function block_log(message) {
+    var current_block = new_block();
     var randid = String(getRandomInt())
     current_block.innerHTML += "<p style='white-space:pre-wrap; ' id=" + randid + ">" + message + "</p>";
     return document.getElementById(randid)
@@ -135,7 +136,6 @@ function submit_command(handler,
     if (command) {
         recordToHistory(command)
         document.getElementById("input_source").value = "";
-        new_block();
         block_log(message);
         handler(command);
     }
