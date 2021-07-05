@@ -151,8 +151,8 @@ register_cmd({
         } else {
             var command = getParameters(cmd)[0];
             if (!registry.hasOwnProperty(command))
-                return block_log("Command " + command + " is not registered in registry, please use 'help' to show available commands." +
-                    "USAGE: \n    - " + registry[command].usage + "\nDESCRIPTION: \n    - " + registry[command].description)
+                return block_log("Command " + command + " is not registered in registry, please use 'help' to show available commands.")
+            else block_log("USAGE: \n    - " + registry[command].usage + "\nDESCRIPTION: \n    - " + registry[command].description)
         }
     },
     description: "Show all available commands and their descriptions",

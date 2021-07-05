@@ -159,24 +159,44 @@ register_cmd({
 register_cmd({
     cmd_name: "quiz",
     description: "Get fun quiz to solve.",
-    usage: "quiz",
+    usage: "quiz [OPTIONAL-type] [OPTIONAL-difficulty]\n\n" +
+        "[type] -   multiple, boolean\n" +
+        "[difficulty]   -   easy, medium, hard\n",
     callback: (cmd) => {
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
         var message = block_log("Loading...");
+        var type = getParameters(cmd)[0] || "";
+        var diff = getParameters(cmd)[1] || "";
         $.ajax({
-            url: "https://opentdb.com/api.php?amount=1&category=9&type=boolean",
+            url: "https://opentdb.com/api.php?amount=1&type=" + type + "&difficulty=",
             success: (res) => {
                 var x = res.results[0];
                 var category = x.category;
                 var difficulty = x.difficulty;
+                var question_type = x.type;
                 var question = x.question;
-                var answer = (x.correct_answer == "True") ? true : false;
-                var promptMsg = "Is it correct?\n<span id='true'>[True]</span> || <span id='false'>[False]</span>"
-                var msg = `Category: ${category} || Difficulty: ${difficulty}\n\n` +
-                    `${question}\n${promptMsg}`
-                message.innerHTML = msg
-                $("#true, #false").click((e) => {
-                    var userAnswer = (e.target.id == "true") ? true : false;
-                    if (userAnswer == answer) message.innerHTML = msg.replace(promptMsg, "\n<p style='color:#7FFF00'>Congratulations! You are correct!</p>");
+                var ans1 = x.incorrect_answers;
+                ans1.push(x.correct_answer);
+                var answers = ans1;
+                shuffle(answers)
+                var msg = `Category: ${category} || Difficulty: ${difficulty} || Type: ${question_type}\n\n` +
+                    `${question}\n`
+                var promptMsg = "";
+                var answer_id = [...Array(answers.length).keys()]
+                var ids = (answer_id.map(x => "#" + x)).join(", ")
+                for (var y of answer_id) {
+                    promptMsg += ` <span id='${y}'>[${answers[y]}]</span> `
+                }
+                msg += promptMsg
+                message.innerHTML = msg;
+                $(ids).click((e) => {
+                    var userAnswer = (answers[parseInt(e.target.id)] == x.correct_answer) ? true : false;
+                    if (userAnswer) message.innerHTML = msg.replace(promptMsg, "\n<p style='color:#7FFF00'>Congratulations! You are correct!</p>");
                     else message.innerHTML = msg.replace(promptMsg, "\n<p style='color:#DC143C'>The answer is " + x.correct_answer + ", try again next time.</p>");
                 })
             }
